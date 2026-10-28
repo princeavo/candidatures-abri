@@ -48,24 +48,18 @@ jobs:
       - name: Compilation des assets
         run: npm run build
 
-      - name: Configuration SSH pour le serveur
-        env:
-          SSH_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-          HOST: ${{ secrets.DEPLOY_HOST }}
+      - name: Configuration de la cle SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+
+      - name: Ajout du serveur aux hotes connus
         run: |
-          if [ -z "${SSH_KEY}" ] || [ -z "${HOST}" ]; then
-            echo "ERREUR CRITIQUE : Les secrets DEPLOY_SSH_PRIVATE_KEY ou DEPLOY_HOST ne sont pas configures dans GitHub Settings > Secrets and variables > Actions."
-            exit 1
-          fi
           mkdir -p ~/.ssh
-          printf "%s\n" "${SSH_KEY}" | tr -d '\r' > ~/.ssh/deploy_key
-          echo "" >> ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H "${HOST}" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Transfert du code vers le serveur
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key deploy@${{ secrets.DEPLOY_HOST }} "echo 'Connexion SSH OK depuis le runner GitHub Actions'"
           rsync -avz --delete \
             --exclude='.git' \
             --exclude='.github' \
@@ -74,12 +68,11 @@ jobs:
             --exclude='storage' \
             --exclude='tests' \
             --exclude='*.md' \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             ./ deploy@${{ secrets.DEPLOY_HOST }}:/var/www/abri-platform/source/
 
       - name: Activation sur le serveur
         run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no deploy@${{ secrets.DEPLOY_HOST }} bash << 'REMOTE'
+          ssh deploy@${{ secrets.DEPLOY_HOST }} bash << 'REMOTE'
           set -euo pipefail
           APP_DIR="/var/www/abri-platform"
           SOURCE_DIR="${APP_DIR}/source"
