@@ -3,8 +3,8 @@
 @section('title', 'Connexion Administration | ABRI 2026')
 
 @section('content')
-<div class="min-h-[calc(100vh-280px)] flex items-center justify-center px-4 py-12">
-    <div class="w-full max-w-md bg-white p-8 sm:p-10 rounded-2xl shadow-xs border border-[#E2DBCB] space-y-6">
+<div class="min-h-[calc(100vh-280px)] flex items-center justify-center px-3 sm:px-4 py-8 sm:py-12">
+    <div class="w-full max-w-md bg-white p-5 sm:p-10 rounded-2xl shadow-xs border border-[#E2DBCB] space-y-6">
         
         <!-- Header / Badge -->
         <div class="text-center space-y-3">

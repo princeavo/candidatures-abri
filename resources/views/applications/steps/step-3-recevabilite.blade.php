@@ -22,26 +22,35 @@
         <div class="space-y-3">
             <label class="block text-xs font-semibold uppercase text-[#52625A]">Membres de l'équipe (renseignez autant que nécessaire)</label>
             <template x-for="(member, idx) in teamMembers" :key="idx">
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 p-4 rounded-xl border border-[#E2DBCB] bg-[#fdf9f0]/40">
-                    <div>
-                        <label class="block text-xs text-[#52625A] mb-1">Nom complet</label>
-                        <input type="text" :name="'member_name_' + idx" x-model="member.name" class="w-full px-3 py-2 rounded-lg border border-[#c0c8c3] text-xs">
+                <div class="p-3 sm:p-4 rounded-xl border border-[#E2DBCB] bg-[#fdf9f0]/40 space-y-3">
+                    <div class="flex items-center justify-between text-xs font-semibold text-[#52625A]">
+                        <span x-text="'Membre ' + (idx + 1)"></span>
+                        <button type="button" x-show="teamMembers.length > 1" @click="teamMembers.splice(idx, 1)" class="text-[#ba1a1a] hover:underline flex items-center gap-1 text-[11px] cursor-pointer">
+                            <span class="material-symbols-outlined text-sm">delete</span>
+                            <span>Supprimer</span>
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-xs text-[#52625A] mb-1">Sexe</label>
-                        <select :name="'member_gender_' + idx" x-model="member.gender" class="w-full px-3 py-2 rounded-lg border border-[#c0c8c3] text-xs bg-white">
-                            <option value="">--</option>
-                            <option value="M">M</option>
-                            <option value="F">F</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-[#52625A] mb-1">Rôle</label>
-                        <input type="text" :name="'member_role_' + idx" x-model="member.role" class="w-full px-3 py-2 rounded-lg border border-[#c0c8c3] text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-[#52625A] mb-1">% Capital</label>
-                        <input type="number" min="0" max="100" :name="'member_capital_pct_' + idx" x-model="member.capital_pct" class="w-full px-3 py-2 rounded-lg border border-[#c0c8c3] text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs text-[#52625A] mb-1">Nom complet</label>
+                            <input type="text" :name="'member_name_' + idx" x-model="member.name" class="w-full px-3 py-2 rounded-lg border border-[#c0c8c3] text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-[#52625A] mb-1">Sexe</label>
+                            <select :name="'member_gender_' + idx" x-model="member.gender" class="w-full px-3 py-2 rounded-lg border border-[#c0c8c3] text-xs bg-white">
+                                <option value="">--</option>
+                                <option value="M">M</option>
+                                <option value="F">F</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-[#52625A] mb-1">Rôle</label>
+                            <input type="text" :name="'member_role_' + idx" x-model="member.role" class="w-full px-3 py-2 rounded-lg border border-[#c0c8c3] text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-[#52625A] mb-1">% Capital</label>
+                            <input type="number" min="0" max="100" :name="'member_capital_pct_' + idx" x-model="member.capital_pct" class="w-full px-3 py-2 rounded-lg border border-[#c0c8c3] text-xs">
+                        </div>
                     </div>
                 </div>
             </template>

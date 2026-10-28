@@ -40,14 +40,14 @@
         <!-- Outil utilisé -->
         <div class="space-y-3">
             <label class="block text-sm font-semibold text-[#1c1c16]">Outil(s) utilisé(s) (plusieurs réponses possibles)</label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                 <x-form.checkbox-card name="ai_tool[]" value="ChatGPT" label="ChatGPT" />
                 <x-form.checkbox-card name="ai_tool[]" value="Microsoft Copilot" label="Microsoft Copilot" />
                 <x-form.checkbox-card name="ai_tool[]" value="Gemini" label="Gemini" />
                 <x-form.checkbox-card name="ai_tool[]" value="Claude" label="Claude" />
                 <x-form.checkbox-card name="ai_tool[]" value="DeepL" label="DeepL" />
                 <x-form.checkbox-card name="ai_tool[]" value="Gamma" label="Gamma" />
-                <div class="sm:col-span-3">
+                <div class="sm:col-span-2 lg:col-span-3">
                     <x-form.checkbox-card name="ai_tool[]" value="Autre" label="Autre(s) outil(s)" />
                 </div>
             </div>

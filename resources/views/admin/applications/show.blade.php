@@ -7,18 +7,18 @@
 
     <!-- Top Action Bar -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#E2DBCB]">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('admin.applications.index') }}" class="w-9 h-9 rounded-xl border border-[#c0c8c3] text-[#52625A] hover:bg-[#f1eee5] flex items-center justify-center transition-colors">
+        <div class="flex items-start sm:items-center gap-3 min-w-0">
+            <a href="{{ route('admin.applications.index') }}" class="w-9 h-9 rounded-xl border border-[#c0c8c3] text-[#52625A] hover:bg-[#f1eee5] flex items-center justify-center transition-colors shrink-0 mt-0.5 sm:mt-0">
                 <span class="material-symbols-outlined text-lg">arrow_back</span>
             </a>
-            <div>
+            <div class="min-w-0">
                 <span class="text-xs font-mono uppercase tracking-wider text-[#006c4f] font-bold">{{ $application->reference_code }}</span>
-                <h1 class="font-heading text-2xl font-bold text-[#001e14]">{{ $application->invention_name }}</h1>
+                <h1 class="font-heading text-lg sm:text-2xl font-bold text-[#001e14] break-words">{{ $application->invention_name }}</h1>
             </div>
         </div>
 
-        <div class="flex items-center gap-2">
-            <button onclick="window.print()" class="px-3.5 py-2 rounded-xl border border-[#c0c8c3] text-xs font-semibold text-[#52625A] hover:bg-[#f1eee5] transition-colors flex items-center gap-1.5">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button onclick="window.print()" class="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl border border-[#c0c8c3] text-xs font-semibold text-[#52625A] hover:bg-[#f1eee5] transition-colors flex items-center gap-1.5 shadow-xs">
                 <span class="material-symbols-outlined text-base">print</span>
                 <span>Imprimer la fiche</span>
             </button>
@@ -26,7 +26,7 @@
     </div>
 
     <!-- Dossier Detail Card -->
-    <div class="bg-white rounded-2xl border border-[#E2DBCB] shadow-xs p-6 sm:p-10 space-y-8">
+    <div class="bg-white rounded-2xl border border-[#E2DBCB] shadow-xs p-4 sm:p-8 lg:p-10 space-y-8">
         
         <!-- Section 1: Candidate Identity -->
         <div class="space-y-4">
@@ -102,15 +102,15 @@
             @if ($application->attachments->isNotEmpty())
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     @foreach ($application->attachments as $att)
-                        <div class="flex items-center justify-between p-3.5 rounded-xl border border-[#E2DBCB] bg-[#fdf9f0]/60 hover:bg-[#fdf9f0] transition-colors">
-                            <div class="flex items-center gap-3 overflow-hidden">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border border-[#E2DBCB] bg-[#fdf9f0]/60 hover:bg-[#fdf9f0] transition-colors gap-3">
+                            <div class="flex items-center gap-3 overflow-hidden min-w-0">
                                 <span class="material-symbols-outlined text-2xl text-[#006c4f] shrink-0">attachment</span>
-                                <div class="overflow-hidden">
+                                <div class="overflow-hidden min-w-0">
                                     <div class="font-semibold text-xs text-[#1c1c16] truncate" title="{{ $att->original_name }}">{{ $att->original_name }}</div>
                                     <div class="text-[10px] text-[#52625A]">{{ $att->type }} ({{ number_format($att->size_bytes / 1024, 1) }} Ko)</div>
                                 </div>
                             </div>
-                            <a href="{{ route('admin.attachments.download', $att) }}" class="px-3 py-1.5 rounded-lg bg-[#063527] hover:bg-[#0A4A35] text-white text-xs font-semibold shrink-0 flex items-center gap-1 transition-colors">
+                            <a href="{{ route('admin.attachments.download', $att) }}" class="w-full sm:w-auto justify-center px-3 py-1.5 rounded-lg bg-[#063527] hover:bg-[#0A4A35] text-white text-xs font-semibold shrink-0 flex items-center gap-1 transition-colors">
                                 <span class="material-symbols-outlined text-xs">download</span>
                                 <span>Télécharger</span>
                             </a>

@@ -19,9 +19,14 @@
 
         <!-- Q19.1 Grille RH -->
         <div class="space-y-3">
-            <label class="block text-sm font-semibold text-[#1c1c16]">Q19.1. Qualifications des ressources humaines (Ventilation Hommes / Femmes)</label>
-            <div class="overflow-x-auto border border-[#E2DBCB] rounded-xl">
-                <table class="w-full text-xs text-left">
+            <div class="flex items-center justify-between gap-2">
+                <label class="block text-sm font-semibold text-[#1c1c16]">Q19.1. Qualifications des ressources humaines (Ventilation Hommes / Femmes)</label>
+                <span class="sm:hidden text-[10px] text-[#52625A] flex items-center gap-1 shrink-0 bg-[#f1eee5] px-2 py-0.5 rounded-md">
+                    <span class="material-symbols-outlined text-xs">swipe</span> Défiler
+                </span>
+            </div>
+            <div class="overflow-x-auto border border-[#E2DBCB] rounded-xl -mx-1 sm:mx-0">
+                <table class="w-full text-xs text-left min-w-[420px]">
                     <thead class="bg-[#f1eee5] text-[#52625A] font-semibold border-b border-[#E2DBCB]">
                         <tr>
                             <th class="py-2.5 px-3">Niveau de qualification</th>

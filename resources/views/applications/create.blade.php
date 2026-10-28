@@ -5,23 +5,23 @@
 @section('content')
 <div class="w-full" x-data="abriApplicationForm()" x-cloak>
     <!-- Top Administrative Context Banner -->
-    <div class="w-full bg-[#f1eee5] border-b border-[#c0c8c3]/60 py-6 px-4 sm:px-8 lg:px-12">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div class="space-y-1.5">
-                <div class="flex items-center gap-2">
-                    <span class="px-2.5 py-1 rounded bg-[#0A4A35] text-white text-xs font-semibold uppercase tracking-wider">
+    <div class="w-full bg-[#f1eee5] border-b border-[#c0c8c3]/60 py-4 sm:py-6 px-3 sm:px-8 lg:px-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6">
+            <div class="space-y-1.5 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="px-2.5 py-0.5 rounded bg-[#0A4A35] text-white text-[11px] sm:text-xs font-semibold uppercase tracking-wider">
                         Campagne 2026
                     </span>
                     <span class="text-xs text-[#52625A] font-medium">Portail National des Candidatures</span>
                 </div>
-                <h1 class="font-heading text-2xl sm:text-3xl font-bold text-[#001e14] tracking-tight">
+                <h1 class="font-heading text-lg sm:text-2xl md:text-3xl font-bold text-[#001e14] tracking-tight leading-tight">
                     Appel à candidatures : Inventions et innovations technologiques
                 </h1>
-                <p class="text-sm text-[#52625A] max-w-3xl leading-relaxed">
+                <p class="text-xs sm:text-sm text-[#52625A] max-w-3xl leading-relaxed">
                     Plateforme nationale d'enregistrement pour les chercheurs, inventeurs, startups et innovateurs du Bénin. Les champs marqués d'un astérisque (<span class="text-[#E8112D] font-bold">*</span>) sont obligatoires.
                 </p>
             </div>
-            <div class="flex items-center gap-3 bg-white px-4 py-3 rounded-xl border border-[#E2DBCB] shadow-xs shrink-0">
+            <div class="hidden sm:flex items-center gap-3 bg-white px-4 py-3 rounded-xl border border-[#E2DBCB] shadow-xs shrink-0">
                 <div class="w-9 h-9 rounded-lg bg-[#063527]/10 text-[#063527] flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-xl">verified</span>
                 </div>
@@ -34,24 +34,32 @@
     </div>
 
     <!-- Mobile Stepper Quick Bar -->
-    <div class="lg:hidden w-full bg-white border-b border-[#E2DBCB] px-4 py-3 sticky top-0 z-40 shadow-xs">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-                <span class="w-7 h-7 rounded-full bg-[#063527] text-white flex items-center justify-center text-xs font-bold" x-text="currentStep"></span>
-                <div class="flex flex-col">
-                    <span class="text-[11px] text-[#52625A]" x-text="'Étape ' + currentStep + ' sur ' + totalSteps"></span>
-                    <span class="font-heading text-sm font-bold text-[#001e14]" x-text="stepTitles[currentStep - 1]"></span>
+    <div class="lg:hidden w-full bg-white border-b border-[#E2DBCB] px-3 sm:px-4 py-2.5 sm:py-3 sticky top-0 z-40 shadow-xs">
+        <div class="flex items-center justify-between gap-2">
+            <button type="button" @click="prevStep()" :disabled="currentStep === 1" class="p-1 rounded-lg text-[#52625A] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#f1eee5] transition-colors" aria-label="Étape précédente">
+                <span class="material-symbols-outlined text-xl">chevron_left</span>
+            </button>
+            <div class="flex items-center gap-2 min-w-0">
+                <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#063527] text-white flex items-center justify-center text-xs font-bold shrink-0" x-text="currentStep"></span>
+                <div class="flex flex-col min-w-0">
+                    <span class="text-[10px] sm:text-[11px] text-[#52625A]" x-text="'Étape ' + currentStep + ' sur ' + totalSteps"></span>
+                    <span class="font-heading text-xs sm:text-sm font-bold text-[#001e14] truncate" x-text="stepTitles[currentStep - 1]"></span>
                 </div>
             </div>
-            <span class="text-xs px-2.5 py-0.5 rounded-full bg-[#006c4f]/10 text-[#006c4f] font-semibold" x-text="Math.round((currentStep / totalSteps) * 100) + '%'"></span>
+            <div class="flex items-center gap-1.5 shrink-0">
+                <span class="text-xs px-2 py-0.5 rounded-full bg-[#006c4f]/10 text-[#006c4f] font-semibold" x-text="Math.round((currentStep / totalSteps) * 100) + '%'"></span>
+                <button type="button" @click="nextStep()" :disabled="currentStep === totalSteps" class="p-1 rounded-lg text-[#52625A] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#f1eee5] transition-colors" aria-label="Étape suivante">
+                    <span class="material-symbols-outlined text-xl">chevron_right</span>
+                </button>
+            </div>
         </div>
-        <div class="w-full bg-[#ece8df] h-1.5 rounded-full mt-2.5 overflow-hidden">
+        <div class="w-full bg-[#ece8df] h-1.5 rounded-full mt-2 overflow-hidden">
             <div class="bg-[#006c4f] h-full rounded-full transition-all duration-300" :style="'width: ' + ((currentStep / totalSteps) * 100) + '%'"></div>
         </div>
     </div>
 
     <!-- Main Wizard Grid Layout -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8 lg:py-12">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
             <!-- LEFT COLUMN : Sticky Vertical Stepper -->
@@ -100,7 +108,7 @@
                     <span>Veuillez renseigner correctement tous les champs obligatoires avant de poursuivre.</span>
                 </div>
 
-                <form method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data" @submit="onFormSubmit($event)" class="bg-white p-6 sm:p-10 rounded-2xl shadow-xs border border-[#E2DBCB] space-y-8">
+                <form method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data" @submit="onFormSubmit($event)" class="bg-white p-4 sm:p-8 lg:p-10 rounded-xl sm:rounded-2xl shadow-xs border border-[#E2DBCB] space-y-6 sm:space-y-8">
                     @csrf
 
                     <!-- Inclusions modulaires des 8 étapes -->
@@ -114,28 +122,28 @@
                     @include('applications.steps.step-8-impact-rh')
 
                     <!-- Bottom Navigation Buttons -->
-                    <div class="pt-6 border-t border-[#f1eee5] flex items-center justify-between gap-4">
+                    <div class="pt-6 border-t border-[#f1eee5] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
                         <button type="button"
                                 x-show="currentStep > 1"
                                 @click="prevStep()"
-                                class="px-5 py-2.5 rounded-xl border border-[#c0c8c3] text-[#52625A] hover:bg-[#f1eee5] font-semibold text-sm transition-colors flex items-center gap-1.5 cursor-pointer">
+                                class="w-full sm:w-auto px-5 py-3 sm:py-2.5 rounded-xl border border-[#c0c8c3] text-[#52625A] hover:bg-[#f1eee5] font-semibold text-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
                             <span class="material-symbols-outlined text-lg">arrow_back</span>
                             <span>Précédent</span>
                         </button>
-                        <div x-show="currentStep === 1"></div>
+                        <div x-show="currentStep === 1" class="hidden sm:block"></div>
 
-                        <div class="flex items-center gap-3">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                             <button type="button"
                                     x-show="currentStep < totalSteps"
                                     @click="nextStep()"
-                                    class="px-6 py-2.5 rounded-xl bg-[#063527] hover:bg-[#0A4A35] text-white font-semibold text-sm transition-colors flex items-center gap-2 shadow-sm cursor-pointer">
+                                    class="w-full sm:w-auto px-6 py-3 sm:py-2.5 rounded-xl bg-[#063527] hover:bg-[#0A4A35] text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer">
                                 <span>Continuer</span>
                                 <span class="material-symbols-outlined text-lg">arrow_forward</span>
                             </button>
 
                             <button type="submit"
                                     x-show="currentStep === totalSteps"
-                                    class="px-8 py-3 rounded-xl bg-[#F2B705] hover:bg-[#e0a800] text-[#001e14] font-bold text-sm transition-colors flex items-center gap-2 shadow-sm cursor-pointer">
+                                    class="w-full sm:w-auto px-8 py-3.5 sm:py-3 rounded-xl bg-[#F2B705] hover:bg-[#e0a800] text-[#001e14] font-bold text-sm transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer">
                                 <span class="material-symbols-outlined text-lg">send</span>
                                 <span>Soumettre la candidature</span>
                             </button>

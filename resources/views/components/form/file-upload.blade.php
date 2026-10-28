@@ -29,7 +29,7 @@
             accept="{{ $accept }}"
             @if ($required) required @endif
             @change="clearError('{{ $name }}')"
-            {{ $attributes->merge(['class' => 'mt-2 text-xs text-[#52625A] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#063527] file:text-white hover:file:bg-[#0A4A35] transition-colors cursor-pointer']) }}
+            {{ $attributes->merge(['class' => 'mt-2 text-xs text-[#52625A] max-w-full file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#063527] file:text-white hover:file:bg-[#0A4A35] transition-colors cursor-pointer']) }}
         >
     </div>
 

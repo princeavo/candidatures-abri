@@ -19,28 +19,33 @@
     <!-- Official Top Bar -->
     <header class="w-full z-50 bg-[#063527] text-white">
         <!-- Top Institutional Strip -->
-        <div class="border-b border-[#0A4A35]/60 text-xs py-2 px-4 sm:px-8">
-            <div class="max-w-7xl mx-auto flex items-center justify-between">
-                <div class="flex items-center gap-2">
+        <div class="border-b border-[#0A4A35]/60 text-xs py-2 px-3 sm:px-8">
+            <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
                     <!-- Benin Flag Mini Badge -->
-                    <span class="inline-flex overflow-hidden rounded-xs w-4 h-2.5 shadow-xs">
+                    <span class="inline-flex overflow-hidden rounded-xs w-4 h-2.5 shadow-xs shrink-0">
                         <span class="w-1/3 bg-[#008751] h-full"></span>
                         <span class="w-1/3 bg-[#FCD116] h-full"></span>
                         <span class="w-1/3 bg-[#E8112D] h-full"></span>
                     </span>
-                    <span class="font-medium tracking-wide">RÉPUBLIQUE DU BÉNIN</span>
+                    <span class="font-medium tracking-wide truncate">RÉPUBLIQUE DU BÉNIN</span>
                     <span class="hidden sm:inline text-white/40">|</span>
-                    <span class="hidden sm:inline text-[#a3d0bc] text-[11px] font-normal">Fraternité - Justice - Travail</span>
+                    <span class="hidden sm:inline text-[#a3d0bc] text-[11px] font-normal truncate">Fraternité - Justice - Travail</span>
                 </div>
-                <div class="hidden sm:flex items-center gap-4 text-xs text-[#a3d0bc]">
-                    <span>Contact : contact@abri.bj</span>
-                    <span>|</span>
+                <div class="flex items-center gap-3 sm:gap-4 text-xs text-[#a3d0bc] shrink-0">
+                    <span class="hidden md:inline">Contact : contact@abri.bj</span>
+                    <span class="hidden md:inline">|</span>
                     @auth
-                        <a href="{{ route('admin.applications.index') }}" class="underline hover:text-white">Espace Admin ({{ Auth::user()->name }})</a>
+                        <a href="{{ route('admin.applications.index') }}" class="underline hover:text-white flex items-center gap-1 text-[11px] sm:text-xs">
+                            <span class="material-symbols-outlined text-sm">dashboard</span>
+                            <span class="hidden sm:inline">Espace Admin ({{ Auth::user()->name }})</span>
+                            <span class="sm:hidden">Admin</span>
+                        </a>
                     @else
-                        <a href="{{ route('admin.login') }}" class="hover:text-white flex items-center gap-1">
+                        <a href="{{ route('admin.login') }}" class="hover:text-white flex items-center gap-1 text-[11px] sm:text-xs">
                             <span class="material-symbols-outlined text-sm">lock</span>
-                            <span>Accès Administration</span>
+                            <span class="hidden sm:inline">Accès Administration</span>
+                            <span class="sm:hidden">Admin</span>
                         </a>
                     @endauth
                 </div>
@@ -48,33 +53,36 @@
         </div>
 
         <!-- Main Header Nav -->
-        <div class="h-20 max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between gap-6">
-            <a href="{{ route('applications.create') }}" class="flex items-center gap-4 group">
-                <div class="bg-white px-3 py-1.5 rounded-xl border border-white/20 shadow-xs flex items-center shrink-0">
-                    <img src="{{ asset('images/logo-mesrs.png') }}" alt="République du Bénin | MESRS" class="h-9 sm:h-10 w-auto object-contain">
+        <div class="h-16 sm:h-20 max-w-7xl mx-auto px-3 sm:px-8 flex items-center justify-between gap-3 sm:gap-6">
+            <a href="{{ route('applications.create') }}" class="flex items-center gap-2.5 sm:gap-4 group min-w-0">
+                <div class="bg-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-white/20 shadow-xs flex items-center shrink-0">
+                    <img src="{{ asset('images/logo-mesrs.png') }}" alt="République du Bénin | MESRS" class="h-8 sm:h-10 w-auto object-contain">
                 </div>
-                <div class="flex flex-col">
-                    <span class="font-heading text-xl font-bold tracking-tight text-white leading-tight">ABRI BÉNIN</span>
-                    <span class="text-xs uppercase tracking-wider text-[#a3d0bc]">Agence Béninoise pour la Recherche et l'Innovation</span>
+                <div class="flex flex-col min-w-0">
+                    <span class="font-heading text-base sm:text-xl font-bold tracking-tight text-white leading-tight truncate">ABRI BÉNIN</span>
+                    <span class="hidden sm:block text-xs uppercase tracking-wider text-[#a3d0bc] truncate">Agence Béninoise pour la Recherche et l'Innovation</span>
+                    <span class="sm:hidden text-[10px] text-[#a3d0bc] truncate">Recherche & Innovation</span>
                 </div>
             </a>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                 @auth
-                    <a href="{{ route('admin.applications.index') }}" class="px-4 py-2 rounded-xl text-sm font-semibold bg-[#0A4A35] hover:bg-[#0D5C45] text-white transition-colors flex items-center gap-2">
-                        <span class="material-symbols-outlined text-lg">dashboard</span>
-                        <span>Tableau de bord</span>
+                    <a href="{{ route('admin.applications.index') }}" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#0A4A35] hover:bg-[#0D5C45] text-white transition-colors flex items-center gap-1.5 sm:gap-2">
+                        <span class="material-symbols-outlined text-base sm:text-lg">dashboard</span>
+                        <span class="hidden sm:inline">Tableau de bord</span>
+                        <span class="sm:hidden">Dossiers</span>
                     </a>
                     <form method="POST" action="{{ route('admin.logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="px-3 py-2 rounded-xl text-sm font-semibold text-[#a3d0bc] hover:text-white transition-colors">
-                            Déconnexion
+                        <button type="submit" class="px-2.5 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#a3d0bc] hover:text-white transition-colors">
+                            <span class="hidden sm:inline">Déconnexion</span>
+                            <span class="sm:hidden material-symbols-outlined text-base">logout</span>
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('applications.create') }}" class="px-4 py-2 rounded-xl text-sm font-semibold bg-[#F2B705] hover:bg-[#e0a800] text-[#001e14] transition-colors flex items-center gap-1.5 shadow-sm">
-                        <span class="material-symbols-outlined text-lg">edit_note</span>
-                        <span>Formulaire de Candidature</span>
+                    <a href="{{ route('applications.create') }}" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#F2B705] hover:bg-[#e0a800] text-[#001e14] transition-colors flex items-center gap-1.5 shadow-sm">
+                        <span class="material-symbols-outlined text-base sm:text-lg">edit_note</span>
+                        <span><span class="hidden sm:inline">Formulaire de </span>Candidature</span>
                     </a>
                 @endauth
             </div>

@@ -13,8 +13,8 @@
             <p class="text-xs text-[#52625A]">Session 2026 - Agence Béninoise de la Recherche et de l'Innovation</p>
         </div>
 
-        <div class="flex items-center gap-3">
-            <a href="{{ route('admin.applications.export-csv') }}" class="px-4 py-2.5 rounded-xl bg-[#063527] hover:bg-[#0A4A35] text-white text-xs font-semibold transition-colors flex items-center gap-2 shadow-xs">
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <a href="{{ route('admin.applications.export-csv') }}" class="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-[#063527] hover:bg-[#0A4A35] text-white text-xs font-semibold transition-colors flex items-center gap-2 shadow-xs">
                 <span class="material-symbols-outlined text-base">download</span>
                 <span>Exporter en CSV (Excel)</span>
             </a>
@@ -95,9 +95,10 @@
         </div>
     </form>
 
-    <!-- Applications Table -->
+    <!-- Applications List: Desktop Table + Mobile Cards -->
     <div class="bg-white rounded-2xl border border-[#E2DBCB] shadow-xs overflow-hidden">
-        <div class="overflow-x-auto">
+        <!-- Desktop Table View (>= md) -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead class="bg-[#f1eee5] text-[#52625A] font-semibold border-b border-[#E2DBCB] uppercase tracking-wider text-[11px]">
                     <tr>
@@ -158,6 +159,63 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile Cards View (< md) -->
+        <div class="block md:hidden divide-y divide-[#f1eee5]">
+            @forelse ($applications as $app)
+                <div class="p-4 space-y-3 hover:bg-[#f7f3ea]/30 transition-colors">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-mono font-bold text-sm text-[#063527] bg-[#E6F2EC] px-2.5 py-1 rounded-lg">
+                            {{ $app->reference_code }}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f1eee5] text-[#52625A] text-[11px] font-semibold">
+                                <span class="material-symbols-outlined text-xs">attach_file</span>
+                                {{ $app->attachments_count }}
+                            </span>
+                            <span class="text-[11px] text-[#52625A]">
+                                {{ $app->submitted_at?->format('d/m/Y') ?? '-' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-heading font-bold text-sm text-[#001e14] leading-snug">
+                            {{ $app->invention_name }}
+                        </h3>
+                        <p class="text-xs text-[#52625A] mt-0.5">
+                            <span class="font-medium text-[#1c1c16]">{{ $app->last_name }} {{ $app->first_name }}</span>
+                            @if ($app->phone)
+                                <span class="text-[11px]">({{ $app->phone }})</span>
+                            @endif
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
+                        <span class="px-2 py-0.5 rounded-md bg-[#f1eee5] text-[#001e14] font-medium">
+                            {{ $app->sector }}
+                        </span>
+                        @if ($app->department)
+                            <span class="px-2 py-0.5 rounded-md bg-[#f7f3ea] text-[#52625A] border border-[#E2DBCB]">
+                                {{ $app->department }}
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="pt-1">
+                        <a href="{{ route('admin.applications.show', $app) }}" class="w-full py-2.5 px-3 rounded-xl bg-[#063527] hover:bg-[#0A4A35] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+                            <span class="material-symbols-outlined text-base">visibility</span>
+                            <span>Consulter le dossier</span>
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="py-12 px-4 text-center text-sm text-[#52625A]">
+                    <span class="material-symbols-outlined text-4xl text-[#c0c8c3] block mb-2">inbox</span>
+                    Aucun dossier de candidature trouvé pour le moment.
+                </div>
+            @endforelse
         </div>
 
         <!-- Pagination -->

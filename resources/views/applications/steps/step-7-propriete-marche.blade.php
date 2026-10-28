@@ -38,7 +38,7 @@
         <!-- Q17 Sources de revenus avec checkboxes -->
         <div class="space-y-3">
             <label class="block text-sm font-semibold text-[#1c1c16]">Q17. Sources de revenus de votre solution</label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                 <x-form.checkbox-card name="revenue_types[]" value="vente_directe" label="Vente directe" />
                 <x-form.checkbox-card name="revenue_types[]" value="location" label="Location" />
                 <x-form.checkbox-card name="revenue_types[]" value="abonnement" label="Abonnement" />
@@ -54,7 +54,7 @@
             <label class="block text-sm font-semibold text-[#1c1c16]">Q18. Taille et caractéristiques du marché cible</label>
             <div>
                 <label class="block text-xs font-semibold uppercase text-[#52625A] mb-1">Échelle géographique visée (plusieurs choix possibles)</label>
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
                     <x-form.checkbox-card name="market_scale[]" value="local" label="Local" description="Commune" />
                     <x-form.checkbox-card name="market_scale[]" value="national" label="National" description="Bénin" />
                     <x-form.checkbox-card name="market_scale[]" value="uemoa_cedeao" label="UEMOA / CEDEAO" />
