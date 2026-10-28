@@ -49,14 +49,23 @@ jobs:
         run: npm run build
 
       - name: Configuration de la cle SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-
-      - name: Ajout du serveur aux hotes connus
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          if echo "${SSH_KEY}" | grep -q "PRIVATE KEY"; then
+            printf "%s\n" "${SSH_KEY}" > ~/.ssh/deploy_key
+          else
+            echo "${SSH_KEY}" | base64 -d > ~/.ssh/deploy_key
+          fi
+          echo "" >> ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/deploy_key
+          ssh-keyscan -H "${HOST}" >> ~/.ssh/known_hosts
+          echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}" >> $GITHUB_ENV
+          echo "SSH_AGENT_PID=${SSH_AGENT_PID}" >> $GITHUB_ENV
 
       - name: Transfert du code vers le serveur
         run: |
