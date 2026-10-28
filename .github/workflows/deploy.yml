@@ -53,43 +53,21 @@ jobs:
           SSH_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
-          {
-            echo "### Diagnostic Secrets"
-            echo "- Taille HOST : ${#HOST}"
-            echo "- Taille SSH_KEY : ${#SSH_KEY}"
-            if [ -z "${HOST}" ]; then
-              echo "- Statut : ERREUR - Le secret DEPLOY_HOST est absent"
-              exit 1
-            fi
-            if [ -z "${SSH_KEY}" ]; then
-              echo "- Statut : ERREUR - Le secret DEPLOY_SSH_PRIVATE_KEY est absent"
-              exit 1
-            fi
-            echo "- Statut : Secrets presents"
-          } >> $GITHUB_STEP_SUMMARY
-
           mkdir -p ~/.ssh
-          if echo "${SSH_KEY}" | grep -q "PRIVATE KEY"; then
-            printf "%s\n" "${SSH_KEY}" > ~/.ssh/deploy_key
-          else
-            printf "%s\n" "${SSH_KEY}" | base64 -d > ~/.ssh/deploy_key
-          fi
-          echo "" >> ~/.ssh/deploy_key
+          chmod 700 ~/.ssh
+          python3 -c "import os; open(os.path.expanduser('~/.ssh/deploy_key'), 'w').write(os.environ['SSH_KEY'].strip().replace('\r', '') + '\n')"
           chmod 600 ~/.ssh/deploy_key
+          ssh-keygen -y -f ~/.ssh/deploy_key
 
           cat << 'EOF' > ~/.ssh/config
           Host *
             StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+            LogLevel ERROR
             IdentityFile ~/.ssh/deploy_key
             IdentitiesOnly yes
           EOF
           chmod 600 ~/.ssh/config
-
-          eval "$(ssh-agent -s)" 2>&1 | tee -a $GITHUB_STEP_SUMMARY
-          ssh-add ~/.ssh/deploy_key 2>&1 | tee -a $GITHUB_STEP_SUMMARY
-          ssh-keyscan -H "${HOST}" >> ~/.ssh/known_hosts 2>&1
-          echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}" >> $GITHUB_ENV
-          echo "SSH_AGENT_PID=${SSH_AGENT_PID}" >> $GITHUB_ENV
 
       - name: Transfert du code vers le serveur
         run: |
@@ -101,12 +79,11 @@ jobs:
             --exclude='storage' \
             --exclude='tests' \
             --exclude='*.md' \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             ./ deploy@${{ secrets.DEPLOY_HOST }}:/var/www/abri-platform/source/
 
       - name: Activation sur le serveur
         run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no deploy@${{ secrets.DEPLOY_HOST }} bash << 'REMOTE'
+          ssh deploy@${{ secrets.DEPLOY_HOST }} bash << 'REMOTE'
           set -euo pipefail
           APP_DIR="/var/www/abri-platform"
           SOURCE_DIR="${APP_DIR}/source"
