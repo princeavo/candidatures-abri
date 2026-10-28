@@ -22,7 +22,7 @@ jobs:
       - name: Préparation PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: pgsql, pdo_pgsql, mbstring, xml, curl, zip, bcmath, gd, intl
           tools: composer:v2
 
@@ -109,7 +109,7 @@ jobs:
           chmod -R 755 "${RELEASE_DIR}/public"
 
           echo ">>> Redemarrage PHP-FPM"
-          sudo systemctl reload php8.3-fpm
+          sudo systemctl reload php8.4-fpm
 
           echo ">>> Nettoyage des anciennes releases"
           ls -dt "${APP_DIR}/releases"/* 2>/dev/null | tail -n +$((KEEP_RELEASES + 1)) | xargs rm -rf || true
