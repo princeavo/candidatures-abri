@@ -53,19 +53,36 @@ jobs:
           SSH_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
+          echo ">>> Verification des variables secrets..."
+          if [ -z "${HOST}" ]; then
+            echo "ERREUR CRITIQUE : Le secret DEPLOY_HOST est absent ou vide."
+            exit 1
+          fi
+          echo "DEPLOY_HOST detecte (${#HOST} caracteres)."
+
+          if [ -z "${SSH_KEY}" ]; then
+            echo "ERREUR CRITIQUE : Le secret DEPLOY_SSH_PRIVATE_KEY est absent ou vide."
+            exit 1
+          fi
+          echo "DEPLOY_SSH_PRIVATE_KEY detecte (${#SSH_KEY} caracteres)."
+
           mkdir -p ~/.ssh
           if echo "${SSH_KEY}" | grep -q "PRIVATE KEY"; then
+            echo "Format cle : brut OpenSSH"
             printf "%s\n" "${SSH_KEY}" > ~/.ssh/deploy_key
           else
-            echo "${SSH_KEY}" | base64 -d > ~/.ssh/deploy_key
+            echo "Format cle : base64"
+            printf "%s\n" "${SSH_KEY}" | base64 -d > ~/.ssh/deploy_key
           fi
           echo "" >> ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/deploy_key
           ssh-keyscan -H "${HOST}" >> ~/.ssh/known_hosts
           echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}" >> $GITHUB_ENV
           echo "SSH_AGENT_PID=${SSH_AGENT_PID}" >> $GITHUB_ENV
+          echo ">>> Configuration SSH reussie."
 
       - name: Transfert du code vers le serveur
         run: |
