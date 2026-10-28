@@ -1,0 +1,87 @@
+name: Tests & Qualité
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    name: Tests PHP
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: abri_test
+          POSTGRES_USER: abri_user
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Préparation PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pgsql, pdo_pgsql, mbstring, xml, curl, zip, bcmath, gd, intl
+          tools: composer:v2
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Installation des dépendances
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Préparation de l'environnement de test
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Migrations de test
+        run: php artisan migrate --env=testing --force
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: abri_test
+          DB_USERNAME: abri_user
+          DB_PASSWORD: secret
+
+      - name: Exécution des tests
+        run: php artisan test --parallel
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: abri_test
+          DB_USERNAME: abri_user
+          DB_PASSWORD: secret
+
+  lint:
+    name: Qualité du code
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist
+      - name: Vérification syntaxique PHP
+        run: find app database routes -name "*.php" -exec php -l {} \; | grep -v "No syntax errors" || true

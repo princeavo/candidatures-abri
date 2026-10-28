@@ -1,0 +1,130 @@
+name: Déploiement Production
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Déployer sur le serveur
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Préparation PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pgsql, pdo_pgsql, mbstring, xml, curl, zip, bcmath, gd, intl
+          tools: composer:v2
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Installation des dépendances PHP
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+      - name: Préparation Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Installation des dépendances JS
+        run: npm ci
+
+      - name: Compilation des assets
+        run: npm run build
+
+      - name: Configuration SSH pour le serveur
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Transfert du code vers le serveur
+        run: |
+          rsync -az --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='.env' \
+            --exclude='storage' \
+            --exclude='tests' \
+            --exclude='*.md' \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./ deploy@${{ secrets.DEPLOY_HOST }}:/var/www/abri-platform/source/
+
+      - name: Activation sur le serveur
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no deploy@${{ secrets.DEPLOY_HOST }} bash << 'REMOTE'
+          set -euo pipefail
+          APP_DIR="/var/www/abri-platform"
+          SOURCE_DIR="${APP_DIR}/source"
+          RELEASE_DIR="${APP_DIR}/releases/$(date +%Y%m%d%H%M%S)"
+          SHARED_DIR="${APP_DIR}/shared"
+          CURRENT_LINK="${APP_DIR}/current"
+          KEEP_RELEASES=5
+
+          echo ">>> Preparation des repertoires partages"
+          mkdir -p "${SHARED_DIR}/storage/app/public"
+          mkdir -p "${SHARED_DIR}/storage/logs"
+          mkdir -p "${SHARED_DIR}/storage/framework/cache/data"
+          mkdir -p "${SHARED_DIR}/storage/framework/sessions"
+          mkdir -p "${SHARED_DIR}/storage/framework/views"
+
+          echo ">>> Copie de la release"
+          cp -a "${SOURCE_DIR}" "${RELEASE_DIR}"
+
+          echo ">>> Liens symboliques"
+          rm -rf "${RELEASE_DIR}/storage"
+          ln -nfs "${SHARED_DIR}/storage" "${RELEASE_DIR}/storage"
+          ln -nfs "${APP_DIR}/.env" "${RELEASE_DIR}/.env"
+
+          echo ">>> Optimisations Laravel"
+          cd "${RELEASE_DIR}"
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          php artisan migrate --force
+
+          echo ">>> Activation de la release"
+          ln -nfs "${RELEASE_DIR}" "${CURRENT_LINK}"
+
+          echo ">>> Permissions"
+          chmod -R 775 "${SHARED_DIR}/storage"
+          chmod -R 755 "${RELEASE_DIR}/public"
+
+          echo ">>> Redemarrage PHP-FPM"
+          sudo systemctl reload php8.3-fpm
+
+          echo ">>> Nettoyage des anciennes releases"
+          ls -dt "${APP_DIR}/releases"/* 2>/dev/null | tail -n +$((KEEP_RELEASES + 1)) | xargs rm -rf || true
+
+          echo ""
+          echo "=== DEPLOIEMENT TERMINE : $(date '+%Y-%m-%d %H:%M:%S') ==="
+          REMOTE
+
+      - name: Vérification de la mise en ligne
+        run: |
+          sleep 5
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://candidatures.abri.fpf-it-services.com || echo "000")
+          echo "HTTP Status: ${STATUS}"
+          if [ "${STATUS}" != "200" ] && [ "${STATUS}" != "302" ]; then
+            echo "AVERTISSEMENT : Le site renvoie le code HTTP ${STATUS}"
+          else
+            echo "Site accessible et operationnel."
+          fi

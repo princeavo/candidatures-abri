@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+@source '../../resources/views/**/*.blade.php';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+    --color-primary: #001e14;
+    --color-primary-container: #063527;
+    --color-primary-light: #0A4A35;
+    --color-on-primary: #ffffff;
+    --color-secondary: #006c4f;
+    --color-secondary-container: #93f2cb;
+    --color-on-secondary-container: #007153;
+    
+    --color-surface: #fdf9f0;
+    --color-surface-container-low: #f7f3ea;
+    --color-surface-container: #f1eee5;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-high: #ece8df;
+    
+    --color-on-surface: #1c1c16;
+    --color-on-surface-variant: #414944;
+    --color-outline: #717974;
+    --color-outline-variant: #c0c8c3;
+
+    --color-accent-gold: #F2B705;
+    --color-accent-red: #E8112D;
+    --color-accent-green: #008751;
+
+    --font-heading: 'Bricolage Grotesque', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: var(--color-surface-container-low);
+    color: var(--color-on-surface);
+    font-family: var(--font-body);
+}
+
+h1, h2, h3, .font-heading {
+    font-family: var(--font-heading);
+}
+
+[x-cloak] { display: none !important; }
