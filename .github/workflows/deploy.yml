@@ -58,13 +58,15 @@ jobs:
             exit 1
           fi
           mkdir -p ~/.ssh
-          printf "%s\n" "${SSH_KEY}" > ~/.ssh/deploy_key
+          printf "%s\n" "${SSH_KEY}" | tr -d '\r' > ~/.ssh/deploy_key
+          echo "" >> ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "${HOST}" >> ~/.ssh/known_hosts
 
       - name: Transfert du code vers le serveur
         run: |
-          rsync -az --delete \
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key deploy@${{ secrets.DEPLOY_HOST }} "echo 'Connexion SSH OK depuis le runner GitHub Actions'"
+          rsync -avz --delete \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='node_modules' \
