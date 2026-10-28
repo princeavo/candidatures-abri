@@ -77,6 +77,14 @@ jobs:
           echo "" >> ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
+          cat << 'EOF' > ~/.ssh/config
+          Host *
+            StrictHostKeyChecking no
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+          EOF
+          chmod 600 ~/.ssh/config
+
           eval "$(ssh-agent -s)" 2>&1 | tee -a $GITHUB_STEP_SUMMARY
           ssh-add ~/.ssh/deploy_key 2>&1 | tee -a $GITHUB_STEP_SUMMARY
           ssh-keyscan -H "${HOST}" >> ~/.ssh/known_hosts 2>&1
@@ -93,11 +101,12 @@ jobs:
             --exclude='storage' \
             --exclude='tests' \
             --exclude='*.md' \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             ./ deploy@${{ secrets.DEPLOY_HOST }}:/var/www/abri-platform/source/
 
       - name: Activation sur le serveur
         run: |
-          ssh deploy@${{ secrets.DEPLOY_HOST }} bash << 'REMOTE'
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no deploy@${{ secrets.DEPLOY_HOST }} bash << 'REMOTE'
           set -euo pipefail
           APP_DIR="/var/www/abri-platform"
           SOURCE_DIR="${APP_DIR}/source"
